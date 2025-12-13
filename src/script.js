@@ -68,7 +68,7 @@ class Todo {
     render() {
         this.totalTasksElement.textContent = this.state.items.length
 
-        this.deleteAllButtonElement.toggle(
+        this.deleteAllButtonElement.classList.toggle(
             this.stateClasses.isVisible,
             this.state.items.length > 0
         )
@@ -114,7 +114,7 @@ class Todo {
                     : ''
     }
 
-    addItem() {
+    addItem(title) {
        this.state.items.push({
             id: crypto?.randomUUID() ?? Date.now().toString(),
             title,
@@ -222,7 +222,7 @@ class Todo {
     }
 
     bindEvents() {
-        this.newTaksFormElement.addEventListener('submit', this.onNewTaksFormSubmit)
+        this.newTaskFormElement.addEventListener('submit', this.onNewTaksFormSubmit)
         this.searchTaskFormElement.addEventListener('submit', this.onSearchTaskFormSubmit)
         this.searchTaskInputElement.addEventListener('input', this.onSearchTaskInputChange)
         this.deleteAllButtonElement.addEventListener('click', this.onDeleteAllButtonClick)
