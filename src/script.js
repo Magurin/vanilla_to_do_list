@@ -38,6 +38,7 @@ class Todo {
             searchQuery: '',
         }
         this.render()
+        this.bindEvents()
     }
 
     getItemsFromLocalStorage() {
@@ -144,6 +145,89 @@ class Todo {
         })
         this.saveItemsToLocalStorage()
         this.render()
+    }
+
+    filter() {
+        const queryFormatted = this.state.searchQuery.toLowerCase()
+
+        this.state.filtered.Items = this.state.items.filter(({ title }) => {
+            const titleFromatted = title.toLowerCase()
+
+            return titleFromatted.includes(queryFormatted)
+        })
+        this.render()
+    }
+
+    resetFilter() {
+        this.state.filteredItems = null
+        this.state.searchQuery = ''
+        this.render()
+    }
+
+    onNewTaksFormSubmit = (event) => {
+        event.preventDefault()
+
+        const newTodoItemTitle = this.newTaskInputElement.value
+
+        if (newTodoItemTitle.trim().length > 0) {
+            this.addItem(newTodoItemTitle)
+            this.resetFilter()
+            this.newTaskInputElement.value = ''
+            this.newTaskInputElement.focus()
+        }
+    }
+
+    onSearchTaskFormSubmit = (event) => {
+        event.preventDefault()
+    }
+
+    onSearchTaskInputChange = ({ target }) => {
+        const value = target.value.trim()
+
+        if (value.length) {
+            this.state.searchQuery = value
+            this.filter()
+        } else {
+            this.resetFilter()
+        }
+    }
+
+    onDeleteAllButtonClick = () => {
+        const isConfirmed = confirm('Are you sure you want to delete all?')
+
+        if (isConfirmed) {
+            this.state.items = []
+            this.saveItemsToLocalStorage()
+            this.render()
+        }
+    }
+
+    onClick = ({ target }) => {
+        if (target.matches(this.selectors.itemDeleteButton)) {
+            const itemElement = target.closest(this.selectors.item)
+            const itemCheckboxElement = itemElement.querySelector(this.selectors.itemCheckBox)
+
+            itemElement.classList.add(this.stateClasses.isDisappearing)
+
+            setTimeout(() => {
+                this.deleteItem(itemCheckboxElement.id)
+            }, 400)
+        }
+    }
+
+    onChange = () => {
+        if (target.matches(this.selectors.itemCheckBox)) {
+            this.toggleCheckedState(target.id)
+        }
+    }
+
+    bindEvents() {
+        this.newTaksFormElement.addEventListener('submit', this.onNewTaksFormSubmit)
+        this.searchTaskFormElement.addEventListener('submit', this.onSearchTaskFormSubmit)
+        this.searchTaskInputElement.addEventListener('input', this.onSearchTaskInputChange)
+        this.deleteAllButtonElement.addEventListener('click', this.onDeleteAllButtonClick)
+        this.listElement.addEventListener('click', this.onClick)
+        this.listElement.addEventListener('change', this.onChange)
     }
 }
 
